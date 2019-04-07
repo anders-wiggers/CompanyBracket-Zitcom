@@ -1,9 +1,13 @@
 package a.af.zieball;
 
 import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.GridView;
 
 import com.google.firebase.FirebaseApp;
@@ -19,6 +23,7 @@ import java.util.List;
 import a.af.zieball.adapters.ForsideAdapter;
 import a.af.zieball.classes.Afdeling;
 import a.af.zieball.classes.User;
+import a.af.zieball.fragments.StatsPages;
 
 public class Scoreboard extends AppCompatActivity {
 
@@ -232,4 +237,26 @@ public class Scoreboard extends AppCompatActivity {
 
     private boolean bolAfdelinger = false;
     private boolean bolUsers = false;
+
+    public void openStats(int totalScore, String name){
+        Boolean isThereAFragment = getSupportFragmentManager().findFragmentByTag("stats") == null;
+        if(isThereAFragment) {
+            Fragment fragment = new StatsPages();
+            Bundle args = new Bundle();
+            args.putInt("score",totalScore);
+            args.putString("name",name);
+
+            fragment.setArguments(args);
+            replaceFragment(fragment,"stats");
+        }
+    }
+
+    public void replaceFragment(Fragment fragment, String tag) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.fragContainer, fragment,tag);
+        fragmentTransaction.addToBackStack(fragment.toString());
+        fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+        fragmentTransaction.commit();
+    }
 }
